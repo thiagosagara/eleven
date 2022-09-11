@@ -103,7 +103,8 @@ resource "aws_instance" "blog-sagaratec-app" {
 
   user_data = <<-EOF
   #!/bin/bash		
-  apt update -y && apt install curl ansible unzip git -y
+  apt update -y && apt install curl ansible unzip git software-properties-common -y
+  add-apt-repository ppa:ondrej/php -y && apt update -y
 
   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
   unzip awscliv2.zip
@@ -165,11 +166,11 @@ resource "aws_security_group" "blog-sagaratec-db" {
 resource "aws_db_instance" "default" {
   allocated_storage       = 20
   engine                  = "mysql"
-  engine_version          = "5.7"
+  engine_version          = "5.7.38"
   instance_class          = "db.t3.micro"
   db_name                 = "wordpress"
   username                = "wpuser"
-  password                = "Wp@12345"
+  password                = "Wp-13579"
   parameter_group_name    = "default.mysql5.7"
   skip_final_snapshot     = true
   vpc_security_group_ids  = [aws_security_group.blog-sagaratec-db.id]
@@ -246,6 +247,14 @@ resource "aws_security_group" "blog-sagaratec-alb" {
   name        = var.name_blog-sagaratec-alb
   description = "Liberacoes para ALB"
   vpc_id      = var.vpc_id
+
+  ingress {
+    cidr_blocks   = ["0.0.0.0/0"]
+    description   = "ALB"
+    protocol      = "HTTP"
+    from_port     = 80
+    to_port       = 80
+  }
 
   ingress {
     cidr_blocks   = ["0.0.0.0/0"]
@@ -351,7 +360,7 @@ resource "aws_wafv2_web_acl" "blog-sagaratec-waf" {
   }
 
   visibility_config {
-    cloudwatch_metrics_enabled = false
+    cloudwatch_metrics_enabled = true
     metric_name                = "metric-waf-blog-sagaratec"
     sampled_requests_enabled   = false
   }
