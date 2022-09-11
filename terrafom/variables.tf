@@ -18,6 +18,10 @@ variable "name_blog-sagaratec-sessoes" {
   default = "blog-sagaratec-sessoes"
 }
 
+variable "name_blog-sagaratec-alb" {
+  default = "blog-sagaratec-alb"
+}
+
 variable "vpc_id" {
   default = "vpc-04b0e6cbb6efbafa3"
 }
@@ -30,8 +34,15 @@ variable "type_aws_instance" {
   default = "t3.micro"
 }
 
+variable "availability_zones" {
+  type    = list(string)
+  default = ["us-east-2a","us-east-2b"]
+}
+
 variable "subnet_id_aws_instance" {
-  default = "subnet-06a2288581eb2a944"
+  type    = list(string)
+  default = ["subnet-06a2288581eb2a944","subnet-0fa9d811cd009de14"]
+  #us-east-2a e 2b
 }
 
 variable "key_aws_instance" {
